@@ -1,0 +1,433 @@
+/* ========================================
+   PLAN2050 – Premium Dashboard Styles
+   ======================================== */
+
+/* ---- Layout ---- */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(ellipse at 30% 40%, #101220 0%, #090a0f 70%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle dot grid background */
+.app-layout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---- Navbar ---- */
+.app-navbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 32px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+  font-family: 'Outfit', sans-serif;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: white;
+}
+
+.navbar-brand span {
+  color: rgba(255,255,255,0.5);
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.app-container {
+  display: flex;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Left Pane: Flowchart ---- */
+.flowchart-pane {
+  flex: 0 0 46%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  padding: 24px 8px 24px 24px;
+}
+
+.flowchart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  position: relative;
+}
+
+.row {
+  display: flex;
+  gap: 52px;
+  z-index: 2;
+}
+
+/* ---- Flowchart Nodes ---- */
+.node {
+  width: 194px;
+  height: 86px;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Wide node (node 4 "Scored") spanning between nodes 2 and 3 */
+.node-wide {
+  width: 448px;
+}
+
+.node:hover {
+  transform: translateY(-3px) scale(1.03);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+}
+
+.node.active {
+  border-color: rgba(255,255,255,0.6);
+  transform: scale(1.06);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.15),
+    0 0 28px var(--active-glow, rgba(255,255,255,0.3));
+}
+
+/* Step tag */
+.node .step-tag {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.node.active .step-tag,
+.node:hover .step-tag {
+  opacity: 1;
+}
+
+/* Node colors */
+.node.color-blue {
+  background: linear-gradient(145deg, rgba(59,67,168,0.65), rgba(33,38,115,0.65));
+  --active-glow: rgba(80,90,200,0.6);
+}
+.node.color-green {
+  background: linear-gradient(145deg, rgba(91,155,76,0.65), rgba(55,100,44,0.65));
+  --active-glow: rgba(100,180,80,0.6);
+}
+.node.color-purple {
+  background: linear-gradient(145deg, rgba(130,38,140,0.65), rgba(85,20,92,0.65));
+  --active-glow: rgba(160,50,170,0.6);
+}
+.node.color-red {
+  background: linear-gradient(145deg, rgba(202,44,68,0.65), rgba(138,25,42,0.65));
+  --active-glow: rgba(220,60,80,0.6);
+}
+.node.color-gray {
+  background: linear-gradient(145deg, rgba(90,90,95,0.65), rgba(55,55,60,0.65));
+  --active-glow: rgba(120,120,130,0.6);
+}
+
+.node-text {
+  line-height: 1.35;
+}
+
+/* Invisible spacer (positions Vision under NFC) */
+.spacer-node {
+  width: 194px;
+  height: 86px;
+  visibility: hidden;
+}
+
+/* ---- Flowchart SVG Connectors ---- */
+.lines-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+.svg-line {
+  fill: none;
+  stroke: rgba(255,255,255,0.14);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.4s ease, stroke-width 0.4s ease;
+}
+
+.svg-line.active-line {
+  stroke: var(--line-color, rgba(255,255,255,0.5));
+  stroke-width: 2.5;
+  filter: drop-shadow(0 0 6px var(--line-color, rgba(255,255,255,0.3)));
+  stroke-dasharray: 8 4;
+  animation: dashPulse 1.2s linear infinite;
+}
+
+@keyframes dashPulse {
+  to { stroke-dashoffset: -24; }
+}
+
+/* ---- Right Pane: Details ---- */
+.details-pane {
+  flex: 0 0 54%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding: 40px 40px 40px 20px;
+}
+
+/* ---- Infographic Container ---- */
+.infographic-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Fully visible hub circle */
+.hub-circle {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 190px;
+  height: 190px;
+  background: radial-gradient(circle at 40% 40%, #ffffff, #e8e8f0);
+  border-radius: 50%;
+  z-index: 5;
+  box-shadow:
+    0 0 0 3px rgba(255,255,255,0.05),
+    0 12px 40px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+}
+
+.hub-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #12131a;
+  text-align: center;
+  line-height: 1.45;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* Colored arcs around hub */
+.hub-arcs {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 218px;
+  height: 218px;
+  z-index: 4;
+}
+
+/* Orbital rings */
+.orbital-ring {
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,0.06);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+.orbital-ring-1 {
+  left: -20px;
+  width: 270px;
+  height: 270px;
+  animation: orbitSpin 40s linear infinite;
+}
+.orbital-ring-2 {
+  left: -56px;
+  width: 342px;
+  height: 342px;
+  animation: orbitSpin 60s linear infinite reverse;
+}
+@keyframes orbitSpin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* Branch curves SVG (hub → each bullet item) */
+.spine-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.branch-path {
+  fill: none;
+  stroke: rgba(255,255,255,0.12);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* ---- Detail Cards ---- */
+.bullet-row {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  opacity: 0;
+  transform: translateX(20px) translateY(-50%);
+  animation: cardSlideIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 6;
+}
+
+@keyframes cardSlideIn {
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%);
+  }
+}
+
+/* Colored dot on the branch curve endpoint */
+.spine-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid #12131a;
+  box-shadow: 0 0 0 3px currentColor;
+  z-index: 7;
+}
+
+/* White numbered badge */
+.bullet-num {
+  width: 52px;
+  height: 52px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: #12131a;
+  z-index: 7;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  margin-left: 14px;
+}
+
+/* Glassmorphic card label */
+.bullet-pill {
+  padding: 16px 28px 16px 40px;
+  border-radius: 14px;
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: 0.3px;
+  white-space: normal;
+  max-width: 440px;
+  line-height: 1.5;
+  margin-left: -24px;
+  z-index: 6;
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  border-left: 3px solid var(--pill-color, #888);
+}
+
+/* ---- Empty state ---- */
+.details-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  gap: 14px;
+  padding: 40px;
+}
+
+.details-empty h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+}
+
+.details-empty p {
+  color: rgba(255,255,255,0.3);
+  font-size: 14px;
+  max-width: 280px;
+  line-height: 1.55;
+}
+
+.details-empty .hint-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 4px;
+}

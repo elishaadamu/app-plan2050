@@ -431,3 +431,94 @@
   font-size: 24px;
   margin-bottom: 4px;
 }
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 1200px) {
+  .app-container {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  
+  .flowchart-pane, .details-pane {
+    flex: none;
+    width: 100%;
+  }
+
+  .flowchart-pane {
+    padding: 40px 20px;
+  }
+
+  .details-pane {
+    min-height: 600px;
+    padding: 20px;
+    justify-content: flex-start;
+  }
+
+  .flowchart-container {
+    transform: scale(0.8);
+    transform-origin: top center;
+    margin-bottom: -100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .flowchart-container {
+    transform: scale(0.55);
+    margin-bottom: -250px;
+  }
+  
+  .details-pane {
+    min-height: 500px;
+  }
+
+  .bullet-pill {
+    max-width: 240px;
+    font-size: 13px;
+    padding: 12px 20px 12px 32px;
+  }
+
+  .hub-circle {
+    transform: translateY(-50%) scale(0.7);
+    transform-origin: left center;
+    left: 0;
+  }
+
+  .hub-arcs {
+    transform: translateY(-50%) scale(0.7);
+    transform-origin: left center;
+    left: -14px;
+  }
+
+  .navbar-brand {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .flowchart-container {
+    transform: scale(0.45);
+    margin-bottom: -350px;
+  }
+  
+  .bullet-pill {
+    max-width: 180px;
+    font-size: 12px;
+    padding: 10px 16px 10px 28px;
+  }
+
+  .bullet-num {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    margin-left: 8px;
+  }
+
+  .spine-dot {
+    width: 10px;
+    height: 10px;
+  }
+}

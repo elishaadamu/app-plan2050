@@ -26,23 +26,27 @@
 
 /* ---- Navbar ---- */
 .app-navbar {
-  height: 64px;
+  min-height: 56px;
   display: flex;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 24px;
   background: rgba(255,255,255,0.02);
   border-bottom: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 10;
   font-family: 'Outfit', sans-serif;
+  flex-shrink: 0;
 }
 
 .navbar-brand {
-  font-size: 20px;
+  font-size: clamp(13px, 3vw, 20px);
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: clamp(0.5px, 0.5vw, 2px);
   color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .navbar-brand span {
@@ -67,32 +71,36 @@
   position: relative;
   z-index: 1;
   padding: 24px 8px 24px 24px;
+  overflow: hidden;
 }
 
 .flowchart-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 44px;
+  gap: clamp(16px, 3.5vw, 44px);
   position: relative;
+  width: 100%;
 }
 
 .row {
   display: flex;
-  gap: 52px;
+  gap: clamp(10px, 3vw, 52px);
   z-index: 2;
+  width: 100%;
+  justify-content: center;
 }
 
 /* ---- Flowchart Nodes ---- */
 .node {
-  width: 220px;
-  height: 96px;
+  width: clamp(120px, 30vw, 220px);
+  height: clamp(60px, 10vw, 96px);
   border: 1.5px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   color: white;
   font-family: 'Outfit', sans-serif;
   font-weight: 600;
-  font-size: 18px;
+  font-size: clamp(11px, 2vw, 18px);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -103,11 +111,13 @@
   box-shadow: 0 4px 20px rgba(0,0,0,0.35);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  flex-shrink: 0;
 }
 
 /* Wide node (node 4 "Scored") spanning between nodes 2 and 3 */
 .node-wide {
-  width: 492px;
+  /* Match the combined width of two nodes + the gap between them */
+  width: calc(clamp(120px, 30vw, 220px) * 2 + clamp(10px, 3vw, 52px));
 }
 
 .node:hover {
@@ -176,9 +186,10 @@
 
 /* Invisible spacer (positions Vision under NFC) */
 .spacer-node {
-  width: 220px;
-  height: 96px;
+  width: clamp(120px, 30vw, 220px);
+  height: clamp(60px, 10vw, 96px);
   visibility: hidden;
+  flex-shrink: 0;
 }
 
 /* ---- Flowchart SVG Connectors ---- */
@@ -209,6 +220,7 @@
   stroke-dasharray: 8 4;
   animation: dashPulse 1.2s linear infinite;
 }
+
 
 @keyframes dashPulse {
   to { stroke-dashoffset: -24; }
@@ -436,89 +448,139 @@
    Responsive Design
    ======================================== */
 
-@media (max-width: 1200px) {
+/* Tablet and below: stack vertically */
+@media (max-width: 1024px) {
+  .app-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  #root {
+    height: auto;
+    overflow: auto;
+  }
+
+  html, body {
+    overflow: auto;
+    height: auto;
+  }
+
   .app-container {
     flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  
-  .flowchart-pane, .details-pane {
-    flex: none;
-    width: 100%;
+    overflow: visible;
   }
 
   .flowchart-pane {
-    padding: 40px 20px;
+    flex: none;
+    width: 100%;
+    padding: 32px 16px;
+    align-items: flex-start;
   }
 
   .details-pane {
-    min-height: 600px;
-    padding: 20px;
+    flex: none;
+    width: 100%;
+    min-height: 480px;
+    padding: 16px;
     justify-content: flex-start;
+    overflow: visible;
   }
 
   .flowchart-container {
-    transform: scale(0.8);
-    transform-origin: top center;
-    margin-bottom: -100px;
+    /* No transform hack — fluid via clamp() on nodes */
+    transform: none;
+    margin-bottom: 0;
+    padding-bottom: 16px;
   }
 }
 
-@media (max-width: 768px) {
-  .flowchart-container {
-    transform: scale(0.55);
-    margin-bottom: -250px;
+/* Mobile: tighten further */
+@media (max-width: 600px) {
+  .app-navbar {
+    padding: 0 16px;
   }
-  
+
+  .flowchart-pane {
+    padding: 24px 12px;
+  }
+
   .details-pane {
-    min-height: 500px;
+    min-height: 420px;
+    padding: 12px;
   }
 
-  .bullet-pill {
-    max-width: 240px;
-    font-size: 13px;
-    padding: 12px 20px 12px 32px;
+  /* Infographic: switch to vertical column on very small screens */
+  .infographic-container {
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    padding: 16px 0;
   }
 
+  /* Stack hub + bullets vertically */
   .hub-circle {
-    transform: translateY(-50%) scale(0.7);
-    transform-origin: left center;
-    left: 0;
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 20px;
+    align-self: center;
   }
 
   .hub-arcs {
-    transform: translateY(-50%) scale(0.7);
-    transform-origin: left center;
-    left: -14px;
+    display: none;
   }
 
-  .navbar-brand {
-    font-size: 16px;
+  .orbital-ring {
+    display: none;
   }
-}
 
-@media (max-width: 480px) {
-  .flowchart-container {
-    transform: scale(0.45);
-    margin-bottom: -350px;
+  .spine-svg {
+    display: none;
   }
-  
+
+  /* Cards become a vertical list */
+  .bullet-row {
+    position: relative;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+    margin-bottom: 12px;
+    width: 100%;
+    align-items: flex-start;
+  }
+
   .bullet-pill {
-    max-width: 180px;
-    font-size: 12px;
-    padding: 10px 16px 10px 28px;
+    max-width: 100%;
+    width: 100%;
+    font-size: 13px;
+    padding: 12px 16px 12px 28px;
+    white-space: normal;
   }
 
   .bullet-num {
     width: 40px;
     height: 40px;
     font-size: 16px;
-    margin-left: 8px;
+    margin-left: 10px;
+    flex-shrink: 0;
   }
 
   .spine-dot {
-    width: 10px;
-    height: 10px;
+    display: none;
+  }
+
+  /* Mobile card list wrapper */
+  .details-empty {
+    padding: 24px;
+  }
+
+  .details-empty h2 {
+    font-size: 18px;
   }
 }

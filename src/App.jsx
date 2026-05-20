@@ -63,7 +63,7 @@ const DATA = {
   7: {
     title: "6 Vision",
     items: [
-      "Not-Fiscally Constrained (RS)",
+      "Regionally Significant",
       "Non-Regionally Significant"
     ],
     colors: ["#F44336", "#9C27B0"],
@@ -253,7 +253,10 @@ function App() {
   const calculateLines = useCallback(() => {
     const cr = containerRef.current;
     if (!cr) return;
-    const cRect = cr.getBoundingClientRect();
+    // Use the SVG overlay's bounding rect as the coordinate space for paths.
+    // This is more robust when the container is scaled or transformed on mobile.
+    const svgEl = cr.querySelector('.lines-svg');
+    const cRect = svgEl ? svgEl.getBoundingClientRect() : cr.getBoundingClientRect();
     const newLines = [];
 
     // Helper: get node bounding rect relative to container
@@ -430,15 +433,15 @@ function App() {
             {/* SVG connector lines */}
             <svg className="lines-svg">
               {lines.map(line => {
-                const isActive = activeNode != null && line.nodes.includes(activeNode);
-                return (
-                  <path
-                    key={line.id}
-                    d={line.d}
+                  const isActive = activeNode != null && line.nodes.includes(activeNode);
+                  return (
+                    <path
+                      key={line.id}
+                      d={line.d}
                     className={`svg-line ${isActive ? 'active-line' : ''}`}
                     style={isActive ? { '--line-color': glowColor } : undefined}
-                  />
-                );
+                    />
+                  );
               })}
             </svg>
           </div>

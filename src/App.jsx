@@ -53,7 +53,7 @@ const DATA = {
     nodeColor: "#5B9B4C"
   },
   6: {
-    title: "Not-Fiscally Constrained",
+    title: "Unfunded RS Projects",
     items: [
       "No specific constraints listed"
     ],
@@ -379,25 +379,23 @@ function App() {
 
   // Manual text for clean line breaks
   const nodeTexts = {
-    1: <>1 Universe of<br />Projects</>,
-    2: <>2 Regionally<br />Significant</>,
-    3: <>3 Non-Regionally<br />Significant</>,
-    4: <>4 Scored</>,
-    5: <>5 Fiscally<br />Constrained</>,
+    1: <>Universe of<br />Projects</>,
+    2: <>Regionally<br />Significant</>,
+    3: <>Non-Regionally<br />Significant</>,
+    4: <>Scored</>,
+    5: <>Fiscally<br />Constrained</>,
     6: <>Not-Fiscally<br />Constrained</>,
-    7: <>6 Vision</>,
+    7: <>Vision</>,
   };
 
   const renderNode = (id) => {
     const colorClass = NODE_COLOR_CLASS[id];
-    const stepLabel = STEP_LABELS[id];
     return (
       <button
         ref={(el) => setNodeRef(id, el)}
         className={`node ${colorClass} ${id === 4 ? 'node-wide' : ''} ${activeNode === id ? 'active' : ''}`}
         onClick={() => setActiveNode(activeNode === id ? null : id)}
       >
-        {stepLabel && <span className="step-tag">{stepLabel}</span>}
         <span className="node-text">{nodeTexts[id]}</span>
       </button>
     );
@@ -407,7 +405,7 @@ function App() {
     <div className="app-layout">
       <nav className="app-navbar">
         <div className="navbar-brand">
-          APP PLAN2050 <span>PRESENTATION</span>
+          PLAN2050 <span>PROJECT DEVELOPMENT PROCESS</span>
         </div>
       </nav>
       <main className="app-container">

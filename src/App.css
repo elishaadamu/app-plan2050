@@ -85,14 +85,14 @@
 
 /* ---- Flowchart Nodes ---- */
 .node {
-  width: 194px;
-  height: 86px;
+  width: 220px;
+  height: 96px;
   border: 1.5px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   color: white;
   font-family: 'Outfit', sans-serif;
   font-weight: 600;
-  font-size: 15.5px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -107,7 +107,7 @@
 
 /* Wide node (node 4 "Scored") spanning between nodes 2 and 3 */
 .node-wide {
-  width: 448px;
+  width: 492px;
 }
 
 .node:hover {
@@ -176,8 +176,8 @@
 
 /* Invisible spacer (positions Vision under NFC) */
 .spacer-node {
-  width: 194px;
-  height: 86px;
+  width: 220px;
+  height: 96px;
   visibility: hidden;
 }
 

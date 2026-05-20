@@ -9,9 +9,10 @@ const DATA = {
       "Comprehensive plans and SYIP",
       "Multimodal studies",
       "Unselected SMART SCALE, STBG/CMAQ, and TAP projects",
-      "Unimplemented PLAN2045 projects"
+      "Unimplemented PLAN2045 projects",
+      "Staff Input"
     ],
-    colors: ["#9C27B0", "#673AB7", "#03A9F4", "#FFC107", "#8BC34A"],
+    colors: ["#9C27B0", "#673AB7", "#03A9F4", "#FFC107", "#8BC34A", "#FF6B6B"],
     nodeColor: "#3B43A8"
   },
   2: {

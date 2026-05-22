@@ -6,9 +6,9 @@ const DATA = {
     title: "1 Universe of Projects",
     items: [
       "VTrans needs",
-      "Comprehensive plans and SYIP",
+      "Comprehensive plans",
       "Multimodal studies",
-      "Unselected SMART SCALE, STBG/CMAQ, and TAP projects",
+      "Unselected projects (smart scale, STBG/CMAQ, TAP)",
       "Unimplemented PLAN2045 projects",
       "Staff Input"
     ],
@@ -48,7 +48,8 @@ const DATA = {
     title: "5 Fiscally Constrained",
     items: [
       "Scored projects",
-      "Revenue forecast"
+      "Revenue forecast",
+      "SYIP",
     ],
     colors: ["#8BC34A", "#03A9F4"],
     nodeColor: "#5B9B4C"
@@ -230,7 +231,9 @@ function DetailsInfographic({ data }) {
               animationDelay: `${index * 0.1}s`,
             }}
           >
-            <div className="spine-dot" style={{ color, backgroundColor: color }} />
+            {data.title !== "6 Vision" && (
+              <div className="spine-dot" style={{ color, backgroundColor: color }} />
+            )}
             <div className="bullet-num">{index + 1}</div>
             <div className="bullet-pill" style={{ '--pill-color': color }}>{item}</div>
           </div>
@@ -346,22 +349,6 @@ function App() {
         id: '6-7',
         d: `M ${n6.cx} ${n6.bottom} L ${n7.cx} ${n7.top}`,
         nodes: [6, 7],
-      });
-    }
-
-    // ── 3 → 7: bypass right side ──
-    // Exits node 3 right side, goes far right, drops all the way down, enters Vision right side
-    if (n3 && n7) {
-      const clearX = Math.max(
-        n3.right,
-        n4 ? n4.right : 0,
-        n6 ? n6.right : 0,
-        n7.right
-      ) + 32;
-      newLines.push({
-        id: '3-7',
-        d: `M ${n3.right} ${n3.cy} L ${clearX} ${n3.cy} L ${clearX} ${n7.cy} L ${n7.right} ${n7.cy}`,
-        nodes: [3, 7],
       });
     }
 

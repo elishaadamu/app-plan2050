@@ -18,10 +18,10 @@ const DATA = {
   2: {
     title: "2 Regionally Significant",
     items: [
-      "Add a travel lane both ways to an arterial, freeway, or interstate",
-      "Construct a new arterial",
-      "Construct a new freeway interchange",
-      "Construct a fixed guideway or heavy rail project"
+      "Travel Lane AFI",
+      "New arterial",
+      "New freeway interchange",
+      "Fixed guideway or heavy rail"
     ],
     colors: ["#E91E63", "#00BCD4", "#4CAF50", "#FF9800"],
     nodeColor: "#5B9B4C"

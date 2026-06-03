@@ -1,252 +1,17 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import { useRevenueData } from './useRevenueData';
 import { BEFORE_PROJECTS, BEFORE_TOTAL_COST, BEFORE_PROFITS, AFTER_PROJECTS, AFTER_TOTAL_COST, AFTER_PROFITS } from './pieChartData';
 
-const DATA = {
-  1: {
-    title: "1 Universe of Projects",
-    items: [
-      "VTrans needs",
-      "Comprehensive plans",
-      "Multimodal studies",
-      "Unselected projects (smart scale, STBG/CMAQ, TAP)",
-      "Unimplemented PLAN2045 projects",
-      "Staff Input"
-    ],
-    colors: ["#9C27B0", "#673AB7", "#03A9F4", "#FFC107", "#8BC34A", "#FF6B6B"],
-    nodeColor: "#3B43A8"
-  },
-  2: {
-    title: "2 Regionally Significant",
-    items: [
-      "Travel Lane AFI",
-      "New arterial",
-      "New freeway interchange",
-      "Fixed guideway or heavy rail"
-    ],
-    colors: ["#E91E63", "#00BCD4", "#4CAF50", "#FF9800"],
-    nodeColor: "#5B9B4C"
-  },
-  3: {
-    title: "3 Non-Regionally Significant",
-    items: [
-      "Everything not RS"
-    ],
-    colors: ["#3F51B5"],
-    nodeColor: "#82268C"
-  },
-  4: {
-    title: "4 Scored (Project Scoring)",
-    items: [
-      "STBG/CMAQ scoring",
-      "PLAN2045",
-      "SMART SCALE"
-    ],
-    colors: ["#009688", "#E91E63", "#FFC107"],
-    nodeColor: "#3B43A8"
-  },
-  5: {
-    title: "5 Fiscally Constrained",
-    items: [
-      "Scored projects",
-      "Revenue forecast",
-      "SYIP",
-    ],
-    colors: ["#8BC34A", "#03A9F4"],
-    nodeColor: "#5B9B4C"
-  },
-  6: {
-    title: "Unfunded RS Projects",
-    items: [
-      "No specific constraints listed"
-    ],
-    colors: ["#9E9E9E"],
-    nodeColor: "#555"
-  },
-  7: {
-    title: "6 Vision",
-    items: [
-      "Regionally Significant",
-      "Non-Regionally Significant"
-    ],
-    colors: ["#F44336", "#9C27B0"],
-    nodeColor: "#CA2C44"
-  }
-};
-
-const NODE_GLOW_COLORS = {
-  1: 'rgba(80,90,200,0.7)',
-  2: 'rgba(100,180,80,0.7)',
-  3: 'rgba(160,50,170,0.7)',
-  4: 'rgba(80,90,200,0.7)',
-  5: 'rgba(100,180,80,0.7)',
-  6: 'rgba(120,120,130,0.7)',
-  7: 'rgba(220,60,80,0.7)',
-};
-
-const STEP_LABELS = {
-  1: 'STEP 01', 2: 'STEP 02', 3: 'STEP 03',
-  4: 'STEP 04', 5: 'STEP 05', 6: '', 7: 'STEP 06',
-};
-
-const NODE_COLOR_CLASS = {
-  1: 'color-blue', 2: 'color-green', 3: 'color-purple',
-  4: 'color-blue', 5: 'color-green', 6: 'color-gray', 7: 'color-red',
-};
-
-/* ============================================================
-   DetailsInfographic – hub + fanning branch curves + cards
-   ============================================================ */
-function DetailsInfographic({ data }) {
-  const svgRef = useRef(null);
-  const count = data.items.length;
-
-  // Hub is fully visible, no clipping
-  const hubLeft = 24;
-  const hubSize = 160;
-  const hubEdgeX = hubLeft + hubSize + 8; // right edge of hub circle
-
-  // Calculate item positions (vertical fan with subtle crescent)
-  const getPositions = () => {
-    const positions = [];
-    const centerY = 50;
-
-    if (count === 1) {
-      positions.push({ dotX: 300, y: 50 });
-    } else {
-      const spreadY = Math.min(72, (count - 1) * 16);
-      const startY = centerY - spreadY / 2;
-      const stepY = spreadY / (count - 1);
-      const baseX = 270;
-      const curveDepth = 40;
-
-      for (let i = 0; i < count; i++) {
-        const y = startY + i * stepY;
-        const mid = (count - 1) / 2;
-        const norm = mid === 0 ? 0 : (i - mid) / mid;
-        const stagger = Math.cos(norm * Math.PI / 3) * curveDepth;
-        positions.push({ dotX: baseX + stagger, y });
-      }
-    }
-    return positions;
-  };
-
-  const positions = getPositions();
-
-  // Build individual cubic-bezier branch curves from hub to each dot
-  const buildBranches = (containerW, containerH) => {
-    const startX = hubEdgeX;
-    const startY = containerH / 2;
-    return positions.map(pos => {
-      const dotX = pos.dotX;
-      const dotY = (pos.y / 100) * containerH;
-      // cp1: exit hub horizontally to the right
-      const cp1X = startX + (dotX - startX) * 0.5;
-      const cp1Y = startY;
-      // cp2: arrive at dot horizontally from the left
-      const cp2X = startX + (dotX - startX) * 0.5;
-      const cp2Y = dotY;
-      return `M ${startX} ${startY} C ${cp1X} ${cp1Y}, ${cp2X} ${cp2Y}, ${dotX} ${dotY}`;
-    });
-  };
-
-  // Update branches when container resizes
-  useEffect(() => {
-    const updateBranches = () => {
-      const svg = svgRef.current;
-      if (!svg) return;
-      const rect = svg.getBoundingClientRect();
-      const branches = buildBranches(rect.width, rect.height);
-      const pathEls = svg.querySelectorAll('.branch-path');
-      branches.forEach((d, i) => {
-        if (pathEls[i]) pathEls[i].setAttribute('d', d);
-      });
-    };
-    updateBranches();
-    const observer = new ResizeObserver(updateBranches);
-    if (svgRef.current) observer.observe(svgRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Arc segments around hub
-  const arcColors = data.colors.slice(0, Math.min(6, data.colors.length));
-  const arcSegments = arcColors.map((color, i) => {
-    const total = arcColors.length;
-    const arcSpan = 180;
-    const gap = total > 1 ? 6 : 0;
-    const segAngle = (arcSpan - gap * (total - 1)) / total;
-    const startAngle = -90 + i * (segAngle + gap);
-    const endAngle = startAngle + segAngle;
-    const r = 86;
-    const cx = 92, cy = 92;
-    const x1 = cx + r * Math.cos((startAngle * Math.PI) / 180);
-    const y1 = cy + r * Math.sin((startAngle * Math.PI) / 180);
-    const x2 = cx + r * Math.cos((endAngle * Math.PI) / 180);
-    const y2 = cy + r * Math.sin((endAngle * Math.PI) / 180);
-    const largeArc = segAngle > 180 ? 1 : 0;
-    return (
-      <path
-        key={i}
-        d={`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`}
-        stroke={color}
-        strokeWidth="8"
-        fill="none"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-    );
-  });
-
-  return (
-    <div className="infographic-container">
-      {/* Orbital rings */}
-      <div className="orbital-ring orbital-ring-1" />
-      <div className="orbital-ring orbital-ring-2" />
-
-      {/* Hub */}
-      <div className="hub-circle">
-        <span className="hub-title">{data.title.replace(/^\d+\s*/, '').toUpperCase()}</span>
-      </div>
-
-      {/* Colored arcs */}
-      <svg className="hub-arcs" viewBox="0 0 184 184">{arcSegments}</svg>
-
-      {/* Branch curves SVG */}
-      <svg className="spine-svg" ref={svgRef}>
-        {positions.map((_, i) => (
-          <path key={i} className="branch-path" d="" />
-        ))}
-      </svg>
-
-      {/* Bullet cards */}
-      {data.items.map((item, index) => {
-        const color = data.colors[index % data.colors.length];
-        const pos = positions[index];
-        return (
-          <div
-            key={index}
-            className="bullet-row"
-            style={{
-              top: `${pos.y}%`,
-              left: `${pos.dotX - 5}px`,
-              animationDelay: `${index * 0.1}s`,
-            }}
-          >
-            {data.title !== "6 Vision" && (
-              <div className="spine-dot" style={{ color, backgroundColor: color }} />
-            )}
-            <div className="bullet-num">{index + 1}</div>
-            <div className="bullet-pill" style={{ '--pill-color': color }}>{item}</div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
 /* ============================================================
    GaugeChart – SVG arc speedometer dial
+   pct       : 0–100, fill level
+   value     : center large text (for dynamic Reports, e.g. "$87.85M" or "99.6%")
+   sublabel  : center smaller caption (e.g. "before_count" or "Completed")
+   label     : bottom caption (standard dials)
+   color     : arc fill colour
+   isPieChartDial : boolean (activates count/percentage double stack inside center)
+   count     : integer count (for Pie Chart speedometers)
    ============================================================ */
 function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#6c8ef5', isPieChartDial = false, count = 0 }) {
   const arcRef  = useRef(null);
@@ -258,6 +23,9 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
   const startAngle = 150;   // degrees — bottom-left
   const sweepAngle = 240;   // total gauge span
 
+  // Unique gradient ID per instance to prevent DOM conflicts
+  const gradId = `gaugeGrad_${label.replace(/\W/g, '_')}_${isPieChartDial ? 'pie' : 'rep'}`;
+
   const toRad     = (deg) => (deg * Math.PI) / 180;
   const arcPoint  = (angle) => ({
     x: cx + r  * Math.cos(toRad(angle)),
@@ -266,6 +34,8 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
 
   const safePct   = Math.min(Math.max(pct, 0), 100);
   const fillAngle = startAngle + (sweepAngle * safePct) / 100;
+
+  // Exact arc length for the filled portion (r × θ_radians)
   const fillArcLen = r * toRad(sweepAngle * safePct / 100);
 
   const describeArc = (fromDeg, toDeg) => {
@@ -275,6 +45,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
     return `M ${s.x} ${s.y} A ${r} ${r} 0 ${large} 1 ${e.x} ${e.y}`;
   };
 
+  // Inner decorative thin ring
   const ri = 48;
   const describeRingArc = (fromDeg, toDeg) => {
     const s = { x: cx + ri * Math.cos(toRad(fromDeg)), y: cy + ri * Math.sin(toRad(fromDeg)) };
@@ -283,6 +54,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
     return `M ${s.x} ${s.y} A ${ri} ${ri} 0 ${large} 1 ${e.x} ${e.y}`;
   };
 
+  // Animate arc sweep from 0 → fillArcLen on mount / value update
   useEffect(() => {
     const path = arcRef.current;
     const dot  = dotRef.current;
@@ -313,6 +85,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         dot.style.opacity = eased > 0.05 ? '1' : '0';
 
         if (pctTextRef.current) {
+          // Push text outward radially closer to the circle sweep line
           const textDistance = r + 23;
           const tx = cx + textDistance * Math.cos(toRad(currentAngle));
           const ty = cy + textDistance * Math.sin(toRad(currentAngle)) + 3.5;
@@ -327,6 +100,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
       }
     };
 
+    // Reset properties before starting animation
     path.style.strokeDasharray  = '0 1000';
     path.style.strokeDashoffset = '0';
     if (dot) {
@@ -347,6 +121,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
 
   return (
     <svg viewBox="0 0 160 140" className="gauge-svg" aria-label={label}>
+      {/* Track (full 240° grey track arc) */}
       <path
         d={describeArc(startAngle, startAngle + sweepAngle)}
         fill="none"
@@ -355,6 +130,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         strokeLinecap="round"
       />
 
+      {/* Filled sweep arc — animated via ref */}
       {safePct > 0 && (
         <path
           ref={arcRef}
@@ -367,6 +143,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         />
       )}
 
+      {/* Inner thin decorative ring */}
       <path
         d={describeRingArc(startAngle, startAngle + sweepAngle)}
         fill="none"
@@ -375,6 +152,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         strokeLinecap="round"
       />
 
+      {/* Travelling glow dot tip */}
       {safePct > 0 && (
         <circle
           ref={dotRef}
@@ -388,6 +166,7 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         />
       )}
 
+      {/* Travelling Percentage text floating at the sweep level */}
       {isPieChartDial && safePct > 0 && (
         <text
           ref={pctTextRef}
@@ -406,8 +185,10 @@ function GaugeChart({ pct = 0, value = '', sublabel = '', label = '', color = '#
         </text>
       )}
 
+      {/* Center value layout */}
       {isPieChartDial ? (
         <>
+          {/* Centered Large Count Number inside circle, sublabel text removed */}
           <text x={cx} y={cy + 6} textAnchor="middle" style={{ fill: 'var(--text-main)', fontSize: '32px', fontWeight: '500', fontFamily: "'Outfit', sans-serif" }}>{count}</text>
         </>
       ) : (
@@ -431,11 +212,13 @@ function PieChartTab() {
     return typeof v === 'number' ? v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : v;
   };
 
+  // Consistent blue for Before, consistent green for After
   const BEFORE_COLORS = ['#60a5fa', '#60a5fa', '#60a5fa', '#60a5fa', '#60a5fa'];
   const AFTER_COLORS  = ['#34d399', '#34d399', '#34d399', '#34d399', '#34d399'];
 
   return (
     <div className="pie-tab-layout">
+      {/* Sidebar on the Left */}
       <aside className="pie-sidebar">
         <div className="sidebar-group-title">Scenario</div>
         <div className="sidebar-buttons">
@@ -457,8 +240,10 @@ function PieChartTab() {
         </div>
       </aside>
 
+      {/* Main content area on the Right */}
       <div className="pie-content">
         {activeSubTab === 'before' ? (
+          /* ── BEFORE STATES PANEL ── */
           <section className="pie-section before-section">
             <div className="pie-section-header">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
@@ -469,6 +254,7 @@ function PieChartTab() {
               </div>
             </div>
 
+            {/* 5 Speedometers for Before */}
             <div className="pie-grid">
               {BEFORE_PROJECTS.map((item, idx) => {
                 const color = BEFORE_COLORS[idx % BEFORE_COLORS.length];
@@ -493,9 +279,11 @@ function PieChartTab() {
             </div>
           </section>
         ) : (
+          /* ── AFTER STATES PANEL ── */
           <section className="pie-section after-section">
             <div className="pie-section-header">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
+                
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <div className="section-meta-pill">Total Cost: ${fmt(AFTER_TOTAL_COST)}M</div>
                   <div className="section-meta-pill" style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', border: '1px solid rgba(52, 211, 153, 0.3)' }}>Projects: {AFTER_PROFITS}</div>
@@ -503,6 +291,7 @@ function PieChartTab() {
               </div>
             </div>
 
+            {/* 5 Speedometers for After */}
             <div className="pie-grid">
               {AFTER_PROJECTS.map((item, idx) => {
                 const color = AFTER_COLORS[idx % AFTER_COLORS.length];
@@ -539,6 +328,7 @@ function ReportTab() {
   const { sources, rows, totals, loading, error } = useRevenueData();
   const [selectedRevenue, setSelectedRevenue] = useState('');
 
+  // Auto-select first dynamic source once dataset completes loading
   useEffect(() => {
     if (sources.length > 0 && !selectedRevenue) {
       setSelectedRevenue(sources[0]);
@@ -553,6 +343,12 @@ function ReportTab() {
   const fmtPct = (v) => {
     if (v === null || v === undefined) return '–';
     return typeof v === 'number' ? v.toFixed(2) + '%' : v;
+  };
+
+  const utilClass = (pct) => {
+    if (pct >= 100) return 'util-full';
+    if (pct >= 50) return 'util-partial';
+    return 'util-low';
   };
 
   if (loading) {
@@ -582,11 +378,13 @@ function ReportTab() {
   return (
     <div className="report-tab">
       <div className="report-section utilization-section">
+        {/* Dynamic Controls Header Banner */}
         <div className="report-section-header">
-          <span className="report-section-badge">DYNAMIC REPORTS</span>
+          <span className="report-section-badge util-badge">DYNAMIC REPORTS</span>
           <div className="util-header-row">
             <h2 className="report-section-title">Revenue Source</h2>
             <div className="dropdown-wrapper">
+              <label className="dropdown-label" htmlFor="revenue-select"></label>
               <select
                 id="revenue-select"
                 className="revenue-dropdown"
@@ -601,6 +399,7 @@ function ReportTab() {
           </div>
         </div>
 
+        {/* Dynamic speedometer dials for the picked source */}
         <div className="gauge-grid">
           {[
             {
@@ -630,7 +429,7 @@ function ReportTab() {
             {
               id: 'util',
               label: 'Utilization',
-              value: `${totalVals[3].toFixed(1)}%`,
+              value: `${totalVals[3].toFixed(1)}`,
               sublabel: '',
               pct: totalVals[3],
               color: '#a78bfa',
@@ -650,15 +449,16 @@ function ReportTab() {
           ))}
         </div>
 
-        <div className="report-table-wrapper">
-          <table className="report-table">
+        {/* Dynamic Forecast Grid Table */}
+        <div className="report-table-wrapper util-table-wrapper">
+          <table className="report-table util-table">
             <thead>
               <tr>
                 <th className="col-year">Year</th>
-                <th>Original</th>
-                <th>90% Cap</th>
-                <th>Programmed</th>
-                <th>Utilization</th>
+                <th className="col-sub">Original</th>
+                <th className="col-sub">90% Cap</th>
+                <th className="col-sub">Programmed</th>
+                <th className="col-sub col-util">Utilization</th>
               </tr>
             </thead>
             <tbody>
@@ -670,7 +470,7 @@ function ReportTab() {
                     <td className="data-cell">{fmt(orig)}</td>
                     <td className="data-cell">{fmt(yoe)}</td>
                     <td className="data-cell">{fmt(prog)}</td>
-                    <td className="data-cell">
+                    <td className={`data-cell util-cell`}>
                       <div className="util-gauge-inline">
                         <span className="util-pct-text" style={{ color: '#a78bfa' }}>{fmtPct(util)}</span>
                         <svg viewBox="0 0 100 12" className="util-arc-bar" aria-hidden="true">
@@ -687,12 +487,13 @@ function ReportTab() {
                   </tr>
                 );
               })}
+              {/* TOTAL ROW */}
               <tr className="row-total">
                 <td className="col-year-cell total-label">TOTAL</td>
                 <td className="data-cell total-cell">{fmt(totalVals[0])}</td>
                 <td className="data-cell total-cell">{fmt(totalVals[1])}</td>
                 <td className="data-cell total-cell">{fmt(totalVals[2])}</td>
-                <td className="data-cell total-cell">
+                <td className="data-cell total-cell util-cell">
                   <div className="util-gauge-inline">
                     <span className="util-pct-text" style={{ color: '#a78bfa' }}>{fmtPct(totalVals[3])}</span>
                     <svg viewBox="0 0 100 12" className="util-arc-bar" aria-hidden="true">
@@ -716,263 +517,48 @@ function ReportTab() {
 }
 
 /* ============================================================
-   App – Flowchart with proper T-junction wiring
+   App – Main layout wrapping Tabs (Pie Chart and Reports)
    ============================================================ */
 function App() {
-  const [activeNode, setActiveNode] = useState(null);
-  const [lines, setLines] = useState([]);
-  const [activeBottomTab, setActiveBottomTab] = useState('pie');
-  const containerRef = useRef(null);
-  const nodeRefs = useRef({});
-  const scrollContainerRef = useRef(null);
-
-  const setNodeRef = (id, el) => { nodeRefs.current[id] = el; };
-
-  const handleTabClick = (tabName) => {
-    setActiveBottomTab(tabName);
-    if (scrollContainerRef.current) {
-      const flowchartEl = scrollContainerRef.current.querySelector('.app-container');
-      if (flowchartEl) {
-        scrollContainerRef.current.scrollTo({
-          top: flowchartEl.offsetHeight,
-          behavior: 'smooth'
-        });
-      }
-    }
-  };
-
-  const calculateLines = useCallback(() => {
-    const cr = containerRef.current;
-    if (!cr) return;
-    // Use the SVG overlay's bounding rect as the coordinate space for paths.
-    // This is more robust when the container is scaled or transformed on mobile.
-    const svgEl = cr.querySelector('.lines-svg');
-    const cRect = svgEl ? svgEl.getBoundingClientRect() : cr.getBoundingClientRect();
-    const newLines = [];
-
-    // Helper: get node bounding rect relative to container
-    const nr = (id) => {
-      const el = nodeRefs.current[id];
-      if (!el) return null;
-      const r = el.getBoundingClientRect();
-      return {
-        cx: r.left + r.width / 2 - cRect.left,
-        top: r.top - cRect.top,
-        bottom: r.bottom - cRect.top,
-        left: r.left - cRect.left,
-        right: r.right - cRect.left,
-        cy: r.top + r.height / 2 - cRect.top,
-      };
-    };
-
-    const n1 = nr(1), n2 = nr(2), n3 = nr(3), n4 = nr(4);
-    const n5 = nr(5), n6 = nr(6), n7 = nr(7);
-
-    // ── 1 → {2, 3}: T-junction ──
-    // Vertical stem from 1's bottom, horizontal crossbar, vertical drops into 2 and 3
-    if (n1 && n2 && n3) {
-      const midY = (n1.bottom + n2.top) / 2;
-      // Shared vertical stem
-      newLines.push({
-        id: '1-stem',
-        d: `M ${n1.cx} ${n1.bottom} L ${n1.cx} ${midY}`,
-        nodes: [1, 2, 3],
-      });
-      // Left branch → node 2
-      newLines.push({
-        id: '1-2',
-        d: `M ${n1.cx} ${midY} L ${n2.cx} ${midY} L ${n2.cx} ${n2.top}`,
-        nodes: [1, 2],
-      });
-      // Right branch → node 3
-      newLines.push({
-        id: '1-3',
-        d: `M ${n1.cx} ${midY} L ${n3.cx} ${midY} L ${n3.cx} ${n3.top}`,
-        nodes: [1, 3],
-      });
-    }
-
-    // ── 2 → 4: straight vertical ──
-    if (n2 && n4) {
-      newLines.push({
-        id: '2-4',
-        d: `M ${n2.cx} ${n2.bottom} L ${n2.cx} ${n4.top}`,
-        nodes: [2, 4],
-      });
-    }
-
-    // ── 3 → 4: straight vertical ──
-    if (n3 && n4) {
-      newLines.push({
-        id: '3-4',
-        d: `M ${n3.cx} ${n3.bottom} L ${n3.cx} ${n4.top}`,
-        nodes: [3, 4],
-      });
-    }
-
-    // ── 4 → {5, 6}: T-junction ──
-    if (n4 && n5 && n6) {
-      const midY = (n4.bottom + n5.top) / 2;
-      newLines.push({
-        id: '4-stem',
-        d: `M ${n4.cx} ${n4.bottom} L ${n4.cx} ${midY}`,
-        nodes: [4, 5, 6],
-      });
-      newLines.push({
-        id: '4-5',
-        d: `M ${n4.cx} ${midY} L ${n5.cx} ${midY} L ${n5.cx} ${n5.top}`,
-        nodes: [4, 5],
-      });
-      newLines.push({
-        id: '4-6',
-        d: `M ${n4.cx} ${midY} L ${n6.cx} ${midY} L ${n6.cx} ${n6.top}`,
-        nodes: [4, 6],
-      });
-    }
-
-    // ── 6 → 7: straight vertical (NFC → Vision) ──
-    if (n6 && n7) {
-      newLines.push({
-        id: '6-7',
-        d: `M ${n6.cx} ${n6.bottom} L ${n7.cx} ${n7.top}`,
-        nodes: [6, 7],
-      });
-    }
-
-    setLines(newLines);
-  }, []);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver(() => calculateLines());
-    observer.observe(containerRef.current);
-    Object.values(nodeRefs.current).forEach(n => { if (n) observer.observe(n); });
-    calculateLines();
-    const timer = setTimeout(calculateLines, 150);
-    return () => { observer.disconnect(); clearTimeout(timer); };
-  }, [activeNode, calculateLines]);
-
-  const activeData = activeNode ? DATA[activeNode] : null;
-  const glowColor = activeNode ? NODE_GLOW_COLORS[activeNode] : null;
-
-  // Manual text for clean line breaks
-  const nodeTexts = {
-    1: <>Universe of<br />Projects</>,
-    2: <>Regionally<br />Significant</>,
-    3: <>Non-Regionally<br />Significant</>,
-    4: <>Scored</>,
-    5: <>Fiscally<br />Constrained</>,
-    6: <>Not-Fiscally<br />Constrained</>,
-    7: <>Vision</>,
-  };
-
-  const renderNode = (id) => {
-    const colorClass = NODE_COLOR_CLASS[id];
-    return (
-      <button
-        ref={(el) => setNodeRef(id, el)}
-        className={`node ${colorClass} ${id === 4 ? 'node-wide' : ''} ${activeNode === id ? 'active' : ''}`}
-        onClick={() => setActiveNode(activeNode === id ? null : id)}
-      >
-        <span className="node-text">{nodeTexts[id]}</span>
-      </button>
-    );
-  };
+  const [activeTab, setActiveTab] = useState('pie');
 
   return (
     <div className="app-layout">
+      {/* Header Navigation bar */}
       <nav className="app-navbar">
         <div className="navbar-brand">
-          PLAN2050 <span>PROJECT DEVELOPMENT PROCESS</span>
+          CLRP-2050 Summary Report
         </div>
-        <div className="navbar-actions">
-          <a
-            href="https://tac-clrp-2050.netlify.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="external-link"
+        <div className="nav-tabs">
+          <button
+            id="tab-pie"
+            className={`nav-tab ${activeTab === 'pie' ? 'nav-tab-active' : ''}`}
+            onClick={() => setActiveTab('pie')}
           >
-            <span>view external CLRP-2050 Summary Report</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="external-link-icon">
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </a>
+            Allocation
+          </button>
+          <button
+            id="tab-report"
+            className={`nav-tab ${activeTab === 'report' ? 'nav-tab-active' : ''}`}
+            onClick={() => setActiveTab('report')}
+          >
+            Utilization
+          </button>
         </div>
       </nav>
-      
-      <div className="app-content-scrollable" ref={scrollContainerRef}>
-        <main className="app-container">
-          {/* ── Left Pane: Flowchart ── */}
-          <section className="flowchart-pane">
-            <div className="flowchart-container" ref={containerRef}>
-              <div className="row">{renderNode(1)}</div>
-              <div className="row">{renderNode(2)}{renderNode(3)}</div>
-              <div className="row">{renderNode(4)}</div>
-              <div className="row">{renderNode(5)}{renderNode(6)}</div>
-              {/* Spacer positions Vision directly under NFC */}
-              <div className="row">
-                <div className="spacer-node" />
-                {renderNode(7)}
-              </div>
-              {/* SVG connector lines */}
-              <svg className="lines-svg">
-                {lines.map(line => {
-                    const isActive = activeNode != null && line.nodes.includes(activeNode);
-                    return (
-                      <path
-                        key={line.id}
-                        d={line.d}
-                      className={`svg-line ${isActive ? 'active-line' : ''}`}
-                      style={isActive ? { '--line-color': glowColor } : undefined}
-                      />
-                    );
-                })}
-              </svg>
-            </div>
-          </section>
 
-          {/* ── Right Pane: Details ── */}
-          <section className="details-pane">
-            {!activeData && (
-              <div className="details-empty">
-                <div className="hint-icon">👆</div>
-                <h2>Select a node</h2>
-                <p>Click any box in the flowchart to explore its details.</p>
-              </div>
-            )}
-            {activeData && (
-              <DetailsInfographic key={activeNode} data={activeData} />
-            )}
-          </section>
+      {/* Main Content panes */}
+      {activeTab === 'pie' && (
+        <main className="app-container pie-container">
+          <PieChartTab />
         </main>
+      )}
 
-        {/* ── Bottom Section: Tabs (Pie Chart and Reports) ── */}
-        <section className="tabs-section">
-          <h2 className="tabs-section-main-title">CLRP-2050 Summary Report</h2>
-          <div className="tabs-header-container">
-            <div className="tabs-navigation">
-              <button
-                className={`tab-btn ${activeBottomTab === 'pie' ? 'tab-btn-active' : ''}`}
-                onClick={() => handleTabClick('pie')}
-              >
-                PieChart
-              </button>
-              <button
-                className={`tab-btn ${activeBottomTab === 'report' ? 'tab-btn-active' : ''}`}
-                onClick={() => handleTabClick('report')}
-              >
-                Report
-              </button>
-            </div>
-          </div>
-          <div className="tabs-content-container">
-            {activeBottomTab === 'pie' && <PieChartTab />}
-            {activeBottomTab === 'report' && <ReportTab />}
-          </div>
-        </section>
-      </div>
+      {activeTab === 'report' && (
+        <main className="app-container report-container">
+          <ReportTab />
+        </main>
+      )}
     </div>
   );
 }

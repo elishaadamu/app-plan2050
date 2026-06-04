@@ -1190,3 +1190,208 @@
     width: 50px;
   }
 }
+
+/* ============================================================
+   Key Changes Section
+   ============================================================ */
+.key-changes-section {
+  margin-top: 32px;
+  background: var(--bg-section);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.key-changes-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.key-changes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .key-changes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card layout */
+.key-changes-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* Metric Table */
+.metrics-table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-app);
+}
+
+.metrics-comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.metrics-comparison-table th {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 14px 18px;
+  border-bottom: 2px solid var(--border-color);
+  text-align: right;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.metrics-comparison-table th:first-child {
+  text-align: left;
+}
+
+.metrics-comparison-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-light);
+  text-align: right;
+  color: var(--text-main);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrics-comparison-table td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.metrics-comparison-table tr:last-child td {
+  border-bottom: none;
+}
+
+.metric-change {
+  font-weight: 600;
+}
+
+.metric-change.negative {
+  color: #f87171; /* soft red */
+}
+
+.metric-change.positive {
+  color: #34d399; /* soft green */
+}
+
+/* Shifts Container */
+.shifts-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shift-category-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
+}
+
+.shift-category-card:hover {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.shift-header {
+  display: flex;
+  align-items: center;
+}
+
+.shift-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.badge-dropped {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.badge-maintained {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.badge-emerging {
+  background: rgba(167, 139, 250, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+.shift-category-card.dropped-card {
+  border-left: 4px solid #f87171;
+}
+
+.shift-category-card.maintained-card {
+  border-left: 4px solid #60a5fa;
+}
+
+.shift-category-card.emerging-card {
+  border-left: 4px solid #c084fc;
+}
+
+.shift-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.shift-list li {
+  margin-bottom: 6px;
+}
+
+.shift-list li:last-child {
+  margin-bottom: 0;
+}
+
+.shift-list li::marker {
+  color: var(--text-lighter);
+}

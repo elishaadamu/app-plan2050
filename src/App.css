@@ -266,7 +266,7 @@
   justify-content: center;
   position: relative;
   z-index: 1;
-  overflow: hidden;
+  overflow: visible;
   padding: 40px 40px 40px 20px;
 }
 
@@ -283,7 +283,7 @@
 .hub-circle {
   position: absolute;
   left: 20px;
-  top: 50%;
+  top: 35%;
   transform: translateY(-50%);
   width: 190px;
   height: 190px;
@@ -314,7 +314,7 @@
 .hub-arcs {
   position: absolute;
   left: 6px;
-  top: 50%;
+  top: 35%;
   transform: translateY(-50%);
   width: 218px;
   height: 218px;
@@ -324,7 +324,7 @@
 /* Orbital rings */
 .orbital-ring {
   position: absolute;
-  top: 50%;
+  top: 35%;
   border-radius: 50%;
   border: 1px dashed rgba(255,255,255,0.06);
   transform: translateY(-50%);
@@ -669,7 +669,7 @@
   align-items: flex-start;
   position: absolute;
   left: 20px; /* Align with hub-circle left edge */
-  top: calc(50% + 115px);
+  top: calc(35% + 115px);
   z-index: 15;
 }
 
@@ -682,9 +682,8 @@
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-main);
-  padding: 10px 22px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
+  padding: 14px 28px;
+  font-size: 18px;
   font-weight: 600;
   border-radius: 30px;
   cursor: pointer;
@@ -692,6 +691,7 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   outline: none;
+  margin-top: 20px;
 }
 
 .project-stats-btn:hover {
@@ -783,16 +783,16 @@
   color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 1px;
-  padding: 8px 12px;
+  padding: 14px 20px;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .project-stats-table td {
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 14px 20px;
+  font-size: 17px;
   color: var(--text-main);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   vertical-align: middle;
@@ -837,7 +837,7 @@
 .mode-cost,
 .mode-revenue {
   font-family: 'Outfit', sans-serif;
-  font-size: 13px;
+  font-size: 17px;
   color: var(--text-muted);
 }
 
@@ -852,7 +852,7 @@
 }
 
 .mode-row-total td {
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  border-top: 2px solid rgba(255, 255, 255, 0.5) !important;
   border-bottom: none;
   font-weight: 700;
 }
@@ -860,13 +860,13 @@
 .mode-total-label {
   color: var(--text-muted);
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.5px;
 }
 
 .count-total {
   color: #fff;
-  font-size: 14px;
+  font-size: 19px;
 }
 
 /* Mobile Overrides */

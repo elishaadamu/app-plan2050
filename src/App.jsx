@@ -109,10 +109,10 @@ function DetailsInfographic({ data }) {
   // Calculate item positions (vertical fan with subtle crescent)
   const getPositions = () => {
     const positions = [];
-    const centerY = 50;
+    const centerY = 35;
 
     if (count === 1) {
-      positions.push({ dotX: 300, y: 50 });
+      positions.push({ dotX: 300, y: 35 });
     } else {
       const spreadY = Math.min(72, (count - 1) * 16);
       const startY = centerY - spreadY / 2;
@@ -136,7 +136,7 @@ function DetailsInfographic({ data }) {
   // Build individual cubic-bezier branch curves from hub to each dot
   const buildBranches = (containerW, containerH) => {
     const startX = hubEdgeX;
-    const startY = containerH / 2;
+    const startY = containerH * 0.35;
     return positions.map(pos => {
       const dotX = pos.dotX;
       const dotY = (pos.y / 100) * containerH;
@@ -217,7 +217,7 @@ function DetailsInfographic({ data }) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stats-btn-icon">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
-            <span className="stats-btn-text">143 all projects</span>
+            <span className="stats-btn-text">143 All Projects</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`stats-btn-chevron ${showStatsTable ? 'open' : ''}`}>
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
@@ -266,7 +266,7 @@ function DetailsInfographic({ data }) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stats-btn-icon">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
-            <span className="stats-btn-text">68 fc</span>
+            <span className="stats-btn-text">68 FC</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`stats-btn-chevron ${showStatsTable ? 'open' : ''}`}>
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>

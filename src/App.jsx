@@ -99,6 +99,7 @@ const NODE_COLOR_CLASS = {
 function DetailsInfographic({ data }) {
   const svgRef = useRef(null);
   const count = data.items.length;
+  const [showStatsTable, setShowStatsTable] = useState(false);
 
   // Hub is fully visible, no clipping
   const hubLeft = 24;
@@ -206,6 +207,114 @@ function DetailsInfographic({ data }) {
       <div className="hub-circle">
         <span className="hub-title">{data.title.replace(/^\d+\s*/, '').toUpperCase()}</span>
       </div>
+
+      {data.title.includes("Universe of Projects") && (
+        <div className="project-stats-container">
+          <button 
+            className={`project-stats-btn ${showStatsTable ? 'active' : ''}`} 
+            onClick={() => setShowStatsTable(!showStatsTable)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stats-btn-icon">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span className="stats-btn-text">143 all projects</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`stats-btn-chevron ${showStatsTable ? 'open' : ''}`}>
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          {showStatsTable && (
+            <div className="project-stats-table-wrapper">
+              <table className="project-stats-table">
+                <thead>
+                  <tr>
+                    <th>Mode</th>
+                    <th className="align-right">Projects</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="mode-row-hmm">
+                    <td>
+                      <span className="mode-dot dot-hmm"></span>
+                      HMM
+                    </td>
+                    <td className="mode-count count-hmm align-right">116</td>
+                  </tr>
+                  <tr className="mode-row-transit">
+                    <td>
+                      <span className="mode-dot dot-transit"></span>
+                      Transit
+                    </td>
+                    <td className="mode-count count-transit align-right">27</td>
+                  </tr>
+                  <tr className="mode-row-total">
+                    <td className="mode-total-label">Total</td>
+                    <td className="mode-count count-total align-right">143</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {data.title.includes("Fiscally Constrained") && (
+        <div className="project-stats-container">
+          <button 
+            className={`project-stats-btn ${showStatsTable ? 'active' : ''}`} 
+            onClick={() => setShowStatsTable(!showStatsTable)}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="stats-btn-icon">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span className="stats-btn-text">68 fc</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={`stats-btn-chevron ${showStatsTable ? 'open' : ''}`}>
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          {showStatsTable && (
+            <div className="project-stats-table-wrapper">
+              <table className="project-stats-table">
+                <thead>
+                  <tr>
+                    <th>Mode</th>
+                    <th className="align-right">Projects</th>
+                    <th className="align-right">Cost</th>
+                    <th className="align-right">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="mode-row-hmm">
+                    <td>
+                      <span className="mode-dot dot-hmm"></span>
+                      HMM
+                    </td>
+                    <td className="mode-count count-hmm align-right">66</td>
+                    <td className="mode-cost align-right">$710</td>
+                    <td className="mode-revenue align-right">$1,152</td>
+                  </tr>
+                  <tr className="mode-row-transit">
+                    <td>
+                      <span className="mode-dot dot-transit"></span>
+                      Transit
+                    </td>
+                    <td className="mode-count count-transit align-right">2</td>
+                    <td className="mode-cost align-right">$9</td>
+                    <td className="mode-revenue align-right">$151</td>
+                  </tr>
+                  <tr className="mode-row-total">
+                    <td className="mode-total-label">Total</td>
+                    <td className="mode-count count-total align-right">68</td>
+                    <td className="mode-cost align-right font-total-val">$719</td>
+                    <td className="mode-revenue align-right font-total-val">$1,303</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+
 
       {/* Colored arcs */}
       <svg className="hub-arcs" viewBox="0 0 184 184">{arcSegments}</svg>
